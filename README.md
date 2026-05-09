@@ -1,5 +1,4 @@
-# NFL Betting Intelligence Dashboard
-https://hnguyen76.github.io/NFL/
+# NFL Betting Intelligence Dashboard - https://hnguyen76.github.io/NFL/
 Professional static dashboard and report for NFL sportsbook history, built from
 historical nflverse game lines and results.
 
