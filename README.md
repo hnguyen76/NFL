@@ -19,6 +19,11 @@ historical nflverse game lines and results.
 - Blind baseline betting is negative after -110 vig across the major markets.
 - Underdogs have performed better than favorites historically, but broad ATS
   underdog betting is still slightly negative after vig.
+- Recent seasons shifted sharply:
+  - 2020 rewarded underdogs, especially division dogs.
+  - 2021-2023 rewarded unders, with wind-driven unders strongest.
+  - 2024 flipped toward overs and punished blind unders.
+  - 2025 had no clean broad edge; price discipline mattered most.
 - Wind-driven unders are the strongest signal in this dataset:
   - Wind 15+ mph unders: 361-281-7, 56.2% win rate, +7.3% ROI.
   - Wind 10+ mph unders: 969-801-23, 54.8% win rate, +4.5% ROI.

@@ -13,6 +13,7 @@ DATA_DIR = BASE_DIR / "data"
 OUTPUT_PATH = DATA_DIR / "dashboard_data.js"
 
 WIN_UNITS_AT_MINUS_110 = 100 / 110
+FOCUS_SEASONS = tuple(range(2020, 2026))
 
 
 TEAM_OVERRIDES = {
@@ -252,6 +253,12 @@ def confidence_label(summary: dict) -> str:
 def edge_score(summary: dict) -> float:
     sample_factor = min(summary["bets"], 700) / 700
     return round((summary["roi"] or 0) * 100 * sample_factor, 2)
+
+
+def pct_text(value: float | None) -> str:
+    if value is None:
+        return "n/a"
+    return f"{value * 100:.1f}%"
 
 
 def build_games() -> tuple[list[dict], list[dict]]:
@@ -632,6 +639,120 @@ def build_team_rows(team_records: list[dict], team_meta: dict[str, dict]) -> lis
     return sorted(rows, key=lambda item: item["ats"]["roi"] or -999, reverse=True)
 
 
+def find_market(markets: list[dict], market_name: str) -> dict:
+    for row in markets:
+        if row["market"] == market_name:
+            return row
+    raise ValueError(f"Missing market: {market_name}")
+
+
+def year_advice(markets: list[dict], signals: list[dict], traps: list[dict]) -> list[str]:
+    by_market = {row["market"]: row for row in markets}
+    under = by_market["Under"]
+    over = by_market["Over"]
+    underdog = by_market["Underdog ATS"]
+    favorite = by_market["Favorite ATS"]
+    advice = []
+
+    if (under["roi"] or 0) > 0.02:
+        advice.append(
+            f"Totals leaned Under at {pct_text(under['roi'])} ROI; prioritize Under setups only when the number has not already dropped."
+        )
+    elif (over["roi"] or 0) > 0.02:
+        advice.append(
+            f"Totals leaned Over at {pct_text(over['roi'])} ROI; do not force unders without weather or matchup support."
+        )
+    else:
+        advice.append(
+            "Totals were not a clean broad edge; require a stronger filter such as wind, pace, injuries, or a stale line."
+        )
+
+    if (underdog["roi"] or -1) > (favorite["roi"] or -1):
+        advice.append(
+            f"ATS pricing treated underdogs better than favorites ({pct_text(underdog['roi'])} vs {pct_text(favorite['roi'])}); shop key numbers before taking dogs."
+        )
+    else:
+        advice.append(
+            f"Favorites outperformed dogs ({pct_text(favorite['roi'])} vs {pct_text(underdog['roi'])}); avoid reflexively fading public favorites."
+        )
+
+    if signals:
+        top = signals[0]
+        advice.append(
+            f"Best watchlist filter: {top['name']} with {pct_text(top['roi'])} ROI across {top['bets']} bets; treat it as a setup, not an auto-play."
+        )
+
+    if traps:
+        trap = traps[0]
+        advice.append(
+            f"Biggest trap: {trap['name']} at {pct_text(trap['roi'])} ROI; pass unless the current price is clearly better than market."
+        )
+
+    return advice
+
+
+def build_year_focus(
+    games: list[dict],
+    team_records: list[dict],
+    markets: list[str],
+) -> list[dict]:
+    rows = []
+    for season in FOCUS_SEASONS:
+        season_games = [
+            game
+            for game in games
+            if game["game_type"] == "REG" and game["season"] == season
+        ]
+        season_records = [
+            record
+            for record in team_records
+            if record["game_type"] == "REG" and record["season"] == season
+        ]
+        if not season_games:
+            continue
+
+        market_rows = [
+            {"market": market, **summarize_games(season_games, market)}
+            for market in markets
+        ]
+        signal_candidates = [
+            pattern
+            for pattern in build_patterns(season_games, season_records)
+            if pattern["bets"] >= 8 and (pattern["roi"] or 0) > 0
+        ]
+        trap_candidates = [
+            pattern
+            for pattern in build_patterns(season_games, season_records)
+            if pattern["bets"] >= 8 and (pattern["roi"] or 0) < 0
+        ]
+        signals = sorted(
+            signal_candidates,
+            key=lambda item: (item["edge_score"], item["roi"] or -999),
+            reverse=True,
+        )[:3]
+        traps = sorted(
+            trap_candidates,
+            key=lambda item: (item["edge_score"], item["roi"] or 999),
+        )[:3]
+        best_market = max(market_rows, key=lambda row: row["roi"] or -999)
+        worst_market = min(market_rows, key=lambda row: row["roi"] or 999)
+
+        rows.append(
+            {
+                "season": season,
+                "games": len(season_games),
+                "markets": market_rows,
+                "best_market": best_market,
+                "worst_market": worst_market,
+                "signals": signals,
+                "traps": traps,
+                "advice": year_advice(market_rows, signals, traps),
+            }
+        )
+
+    return rows
+
+
 def build_output() -> dict:
     games, team_records = build_games()
     team_meta = load_team_meta()
@@ -726,6 +847,7 @@ def build_output() -> dict:
         "spread_buckets": spread_buckets,
         "total_buckets": total_buckets,
         "weather_buckets": weather_buckets,
+        "year_focus": build_year_focus(games, team_records, markets),
         "patterns": build_patterns(games, team_records),
         "teams": build_team_rows(team_records, team_meta),
     }

@@ -405,6 +405,114 @@ h3 {
   background: var(--surface);
 }
 
+.year-band {
+  background: #fbfaf6;
+}
+
+.year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.year-card {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.year-head,
+.year-split,
+.year-market-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.year-head {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.year-number {
+  color: var(--ink);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.year-split {
+  align-items: stretch;
+}
+
+.year-split span {
+  flex: 1;
+  padding: 12px;
+  background: #f7f5f0;
+  border: 1px solid #ebe6dc;
+  border-radius: 8px;
+}
+
+.year-split small,
+.year-angle small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.year-split strong,
+.year-angle strong {
+  display: block;
+  margin-top: 5px;
+}
+
+.year-market-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.year-market-row {
+  padding-bottom: 7px;
+  border-bottom: 1px solid #ebe6dc;
+  font-size: 0.88rem;
+}
+
+.year-angle {
+  padding-left: 12px;
+  border-left: 4px solid var(--teal);
+}
+
+.year-angle.warning {
+  border-left-color: var(--red);
+}
+
+.year-angle small {
+  margin-top: 4px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.year-advice {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.year-advice li + li {
+  margin-top: 8px;
+}
+
 .diagnostic-grid {
   display: grid;
   grid-template-columns: 1.2fr repeat(3, minmax(210px, 1fr));
@@ -671,7 +779,8 @@ h3 {
 
 @media (max-width: 1100px) {
   .metric-grid,
-  .team-grid {
+  .team-grid,
+  .year-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -700,7 +809,8 @@ h3 {
   }
 
   .metric-grid,
-  .team-grid {
+  .team-grid,
+  .year-grid {
     grid-template-columns: 1fr;
   }
 
@@ -727,6 +837,15 @@ h3 {
   .nav-links a {
     padding-right: 8px;
     padding-left: 8px;
+  }
+
+  .year-split,
+  .year-market-table {
+    grid-template-columns: 1fr;
+  }
+
+  .year-split {
+    flex-direction: column;
   }
 
   .segmented {

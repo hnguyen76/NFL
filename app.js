@@ -246,6 +246,61 @@ function renderDiagnostics() {
   renderCompactTable("#weatherTable", dashboard.weather_buckets, "bucket");
 }
 
+function renderYearFocus() {
+  $("#yearGrid").innerHTML = dashboard.year_focus
+    .map((year) => {
+      const signal = year.signals[0];
+      const trap = year.traps[0];
+      const marketRows = year.markets
+        .map(
+          (row) => `
+            <div class="year-market-row">
+              <span>${escapeHtml(row.market)}</span>
+              <strong class="${outcomeClass(row.roi || 0)}">${formatPct(row.roi)}</strong>
+            </div>
+          `,
+        )
+        .join("");
+      return `
+        <article class="year-card">
+          <div class="year-head">
+            <span class="year-number">${year.season}</span>
+            <span>${formatNumber(year.games)} REG games</span>
+          </div>
+          <div class="year-split">
+            <span>
+              <small>Best market</small>
+              <strong class="${outcomeClass(year.best_market.roi || 0)}">${escapeHtml(
+                year.best_market.market,
+              )} ${formatPct(year.best_market.roi)}</strong>
+            </span>
+            <span>
+              <small>Worst market</small>
+              <strong class="${outcomeClass(year.worst_market.roi || 0)}">${escapeHtml(
+                year.worst_market.market,
+              )} ${formatPct(year.worst_market.roi)}</strong>
+            </span>
+          </div>
+          <div class="year-market-table">${marketRows}</div>
+          <div class="year-angle">
+            <span class="table-label">Signal</span>
+            <strong>${signal ? escapeHtml(signal.name) : "No positive sample"}</strong>
+            <small>${signal ? `${formatPct(signal.roi)} ROI | ${formatNumber(signal.bets)} bets` : "Pass broad filters"}</small>
+          </div>
+          <div class="year-angle warning">
+            <span class="table-label">Trap</span>
+            <strong>${trap ? escapeHtml(trap.name) : "No major trap"}</strong>
+            <small>${trap ? `${formatPct(trap.roi)} ROI | ${formatNumber(trap.bets)} bets` : "Still require price discipline"}</small>
+          </div>
+          <ul class="year-advice">
+            ${year.advice.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+          </ul>
+        </article>
+      `;
+    })
+    .join("");
+}
+
 function renderPatternTable() {
   const rows =
     state.patternMode === "positive"
@@ -370,6 +425,7 @@ function init() {
   renderSeasonChart();
   renderWeekHeat();
   renderDiagnostics();
+  renderYearFocus();
   renderPatternTable();
   wirePatternToggle();
   wireTeamControls();
