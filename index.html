@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NFL Betting Intelligence Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#overview" aria-label="NFL Betting Intelligence">
+        <span class="brand-mark">NFL</span>
+        <span>
+          <strong>Betting Intelligence</strong>
+          <small>Historical ATS + totals research</small>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="Dashboard sections">
+        <a href="#overview">Overview</a>
+        <a href="#markets">Markets</a>
+        <a href="#patterns">Patterns</a>
+        <a href="#teams">Teams</a>
+        <a href="#report">Report</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="command-band" id="overview">
+        <div class="command-copy">
+          <p class="eyebrow">NFL sportsbook history lab</p>
+          <h1>Market patterns, team profiles, and wager risk signals.</h1>
+          <p>
+            Built from nflverse historical game lines and results. All ROI assumes
+            one unit risked at -110 odds and treats pushes as zero-profit wagers.
+          </p>
+        </div>
+        <div class="command-stats" id="metaStats"></div>
+      </section>
+
+      <section class="band">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Executive layer</p>
+            <h2>Market Snapshot</h2>
+          </div>
+          <p class="section-note">Historical filters expose structure; price still decides the wager.</p>
+        </div>
+        <div class="metric-grid" id="kpiGrid"></div>
+      </section>
+
+      <section class="band split-layout" id="markets">
+        <div class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Baseline</p>
+              <h2>Against the Book</h2>
+            </div>
+            <span class="pill">REG season</span>
+          </div>
+          <div class="roi-bars" id="overallBars"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Trend</p>
+              <h2>Season ROI</h2>
+            </div>
+            <div class="segmented" id="marketToggle"></div>
+          </div>
+          <div class="chart-shell" id="seasonChart"></div>
+        </div>
+      </section>
+
+      <section class="band diagnostics">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Diagnostics</p>
+            <h2>Where Edges Hide</h2>
+          </div>
+          <p class="section-note">Spread, total, weather, and weekly profiles.</p>
+        </div>
+        <div class="diagnostic-grid">
+          <div class="panel">
+            <h3>Week Heat Map</h3>
+            <div class="heat-grid" id="weekHeat"></div>
+          </div>
+          <div class="panel">
+            <h3>Spread Buckets</h3>
+            <div class="compact-table" id="spreadTable"></div>
+          </div>
+          <div class="panel">
+            <h3>Total Buckets</h3>
+            <div class="compact-table" id="totalTable"></div>
+          </div>
+          <div class="panel">
+            <h3>Weather Buckets</h3>
+            <div class="compact-table" id="weatherTable"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band" id="patterns">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Wager layer</p>
+            <h2>Pattern Watchlist</h2>
+          </div>
+          <div class="segmented" id="patternToggle">
+            <button class="active" type="button" data-mode="positive">Signals</button>
+            <button type="button" data-mode="traps">Traps</button>
+          </div>
+        </div>
+        <div class="pattern-table" id="patternTable"></div>
+      </section>
+
+      <section class="band" id="teams">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Team matrix</p>
+            <h2>ATS and Totals Profiles</h2>
+          </div>
+          <div class="team-controls">
+            <input id="teamSearch" type="search" placeholder="Search team" aria-label="Search team" />
+            <select id="teamMetric" aria-label="Team metric">
+              <option value="ats">ATS ROI</option>
+              <option value="recent_ats">Recent ATS ROI</option>
+              <option value="underdog_ats">Underdog ATS ROI</option>
+              <option value="favorite_ats">Favorite ATS ROI</option>
+              <option value="over">Over ROI</option>
+            </select>
+          </div>
+        </div>
+        <div class="team-grid" id="teamGrid"></div>
+      </section>
+
+      <section class="report-band" id="report">
+        <div class="report-layout">
+          <div>
+            <p class="eyebrow">Professional report</p>
+            <h2>NFL Betting History: Practical Wager Framework</h2>
+          </div>
+          <article class="report-copy">
+            <h3>Key Findings</h3>
+            <p>
+              Blind betting is structurally negative after vig: the major baseline
+              markets sit below the -110 break-even rate. The useful layer is not
+              "favorite vs underdog" by itself; it is price plus context.
+            </p>
+            <p>
+              Weather is the strongest historical signal in this build. Wind at
+              10+ mph and especially 15+ mph has produced the cleanest under
+              profile, with a large enough sample to deserve pre-game monitoring.
+            </p>
+            <p>
+              Underdog patterns are more nuanced. Division dogs and large dogs
+              can reduce favorite tax, but most broad ATS angles are near break
+              even before line-shopping and closing-line value.
+            </p>
+
+            <h3>Wager Rules</h3>
+            <ol>
+              <li>Require at least 250 historical bets or a clear domain reason for a smaller sample.</li>
+              <li>Demand positive ROI after -110 vig, not only a win rate above 50%.</li>
+              <li>Confirm the current matchup still matches the filter: QB status, weather, rest, venue, and line.</li>
+              <li>Track closing-line value; discard angles that win historically but lose price discipline.</li>
+              <li>Cap exposure per wager and avoid chasing; historical edges can regress quickly.</li>
+            </ol>
+
+            <h3>Data Notes</h3>
+            <p>
+              Source data comes from nflverse/nfldata game history. Spread lines
+              are evaluated from the home-team perspective: home ATS margin =
+              result minus spread_line. Totals use scored points minus total_line.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span id="sourceLine"></span>
+      <span>Research only. Not financial or betting advice.</span>
+    </footer>
+
+    <script src="data/dashboard_data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
